@@ -11,7 +11,6 @@ set smartcase
 "turn on syntax highlighting
 syntax on
 
-
 imap jk <Esc>
 imap kj <Esc>
 
@@ -20,5 +19,4 @@ let mapleader = " "
 " Show a few lines of context around the cursor. Note that this makes the
 " text scroll if you mouse-click near the start or end of the window.
 set scrolloff=5
-
 
