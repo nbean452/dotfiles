@@ -7,11 +7,12 @@ local config = wezterm.config_builder()
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = "Everforest Dark (Gogh)"
+config.color_scheme = "Monokai (dark) (terminal.sexy)"
+-- config.color_scheme = "flexoki-light"
 
 -- Font settings
 config.font = wezterm.font("JetbrainsMono Nerd Font", { bold = false, italic = false })
-config.font_size = 16
+config.font_size = 15
 
 -- Window padding settings
 config.window_padding = {
@@ -23,14 +24,15 @@ config.window_padding = {
 
 -- Hide tab bar if only one tab is open
 config.hide_tab_bar_if_only_one_tab = true
+config.use_fancy_tab_bar = false
+config.tab_and_split_indices_are_zero_based = true
+-- Disable tab bar
+-- config.enable_tab_bar = false
+config.tab_bar_at_bottom = true
 
 -- Set window background opacity
-config.window_background_opacity = 1.0
--- config.window_background_opacity = 0.9
--- config.macos_window_background_blur = 20
-
--- Disable tab bar
-config.enable_tab_bar = false
+config.window_background_opacity = 0.8
+config.macos_window_background_blur = 20
 
 -- Window decoration options
 -- config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
@@ -62,3 +64,4 @@ config.keys = {
 
 -- Finally, return the configuration to wezterm
 return config
+
