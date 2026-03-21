@@ -2,6 +2,15 @@
 
 Here is a bunch of config files for my development environment. I use them to set up a new machine or to keep my current environment in sync.
 
+## SSH Key Setup
+
+Make sure to run these command to setup the SSH key files permissions (if created by copy-pasting):
+
+```sh
+chmod 600 ~/.ssh/<key> &&
+chmod 600 ~/.ssh/<key>.pub
+```
+
 ## Karabiner-Elements
 
 Copy the `karabiner.json` file to `~/.config/karabiner/` to enable the custom keybindings.
