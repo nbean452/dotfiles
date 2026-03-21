@@ -15,6 +15,13 @@ If you're not on Fedora, refer to this [documentation](https://wezterm.org/insta
 
 Side note, if this is the first time installing wezterm on the machine you're on, look onto the section below to patch some weird behaviors on wezterm.
 
+After that, do this command to use my sane defaults (don't forget to install the fonts!):
+
+```sh
+mkdir -p ~/.config/wezterm/ && \
+cp linux/wezterm/wezterm.lua ~/.config/wezterm/wezterm.lua
+```
+
 ## Wezterm Variables Displayed on Terminal
 
 In Fedora 43, using `wezfurlong/wezterm-nightly` Copr would result in wezterm vars being displayed on the terminal when inside a `neovim` instance and using `tmux`. Message looks like this:
