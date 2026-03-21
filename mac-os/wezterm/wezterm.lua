@@ -11,7 +11,7 @@ config.color_scheme = "Monokai (dark) (terminal.sexy)"
 -- config.color_scheme = "flexoki-light"
 
 -- Font settings
-config.font = wezterm.font("JetbrainsMono Nerd Font", { bold = false, italic = false })
+config.font = wezterm.font("JetbrainsMono Nerd Font", { bold = true, italic = false })
 config.font_size = 15
 
 -- Window padding settings
@@ -64,4 +64,3 @@ config.keys = {
 
 -- Finally, return the configuration to wezterm
 return config
-
