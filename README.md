@@ -32,7 +32,8 @@ git config --global user.email "your_email@example.com" && \
 git config --global user.name "your full name" && \
 git config --global init.defaultbranch "main" && \
 git config --global gpg.format ssh && \
-git config --global user.signingkey ~/.ssh/<key>.pub
+git config --global user.signingkey ~/.ssh/<key>.pub && \
+git config --global commit.gpgsign true
 ```
 
 This can be run immediately, assuming that they secret key has been added to GitHub
