@@ -106,7 +106,7 @@ List of things to install to make your terminal experience great:
 
 ## VI, VIM, and NVIM
 
-Most of them time, basic Linux installation has `vi` pre-installed, so i'd usually install `nvim` and then set an alias of `vim="nvim"`. Just copy-paste this:
+Most of the time, basic Linux installation has `vi` pre-installed, so i'd usually install `nvim` and then set an alias of `vim="nvim"`. Just copy-paste this:
 
 ```sh
 sudo dnf install neovim -y && \
