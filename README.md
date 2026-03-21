@@ -94,6 +94,7 @@ Voila, you get a cracked terminal, but there's more to it, read on below.
 
 List of things to install to make your terminal experience great:
 
+- [jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) -> Terminal-based UI to run git commands
 - [sdkman](https://sdkman.io/) -> Java version manager
 - [pyenv/pyenv](https://github.com/pyenv/pyenv) -> Python version manager
 - [nvm-sh/nvm](https://github.com/nvm-sh/nvm) -> Node version manager
