@@ -1,5 +1,22 @@
 # Overview
 
+Outlines installation and bug fixes when using `wezterm` on Linux Fedora
+
+## Installation
+
+For Fedora, it's as simple as running these commands:
+
+```sh
+sudo dnf copr enable wezfurlong/wezterm-nightly -y &&
+sudo dnf install wezterm -y
+```
+
+If you're not on Fedora, refer to this [documentation](https://wezterm.org/install/linux.html)
+
+Side note, if this is the first time installing wezterm on the machine you're on, look onto the section below to patch some weird behaviors on wezterm.
+
+## Wezterm Variables Displayed on Terminal
+
 In Fedora 43, using `wezfurlong/wezterm-nightly` Copr would result in wezterm vars being displayed on the terminal when inside a `neovim` instance and using `tmux`. Message looks like this:
 
 ```txt
