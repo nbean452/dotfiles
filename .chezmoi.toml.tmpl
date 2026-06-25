@@ -1,2 +1,9 @@
+{{ $fingerprint := promptString "Fingerprint - use 'gpg -k --keyid-format=long --with-fingerprint'" -}}
+
+encryption = "gpg"
+
 [diff]
     pager = "delta"
+
+[gpg]
+    recipient = {{ $fingerprint | quote }}
