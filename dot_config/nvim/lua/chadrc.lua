@@ -55,6 +55,7 @@ M = {
       "some-sass-language-server",
       "omnisharp",
       "csharpier",
+      "sleek",
     },
   },
 }
