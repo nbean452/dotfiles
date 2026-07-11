@@ -1,4 +1,6 @@
-{{ $fingerprint := promptString "Fingerprint - use 'gpg -k --keyid-format=long --with-fingerprint'" -}}
+{{ $gpg_fingerprint := promptStringOnce . "gpg_fingerprint" "GPG Recipient - Enter your GPG key fingerprint or email" "gpg -k --keyid-format=long --with-fingerprint" -}}
+{{ $android_home := promptStringOnce . "android_home" "Android home - Where is the SDK located? (Relative to $HOME)" ".android/sdk" -}}
+{{ $adb_vendor_keys := promptStringOnce . "adb_vendor_keys" "ADB vendor key - Where are keys located? (Relative to $HOME)" ".android/adbkey" -}}
 
 encryption = "gpg"
 
@@ -6,4 +8,8 @@ encryption = "gpg"
     pager = "delta"
 
 [gpg]
-    recipient = {{ $fingerprint | quote }}
+    recipient = {{ $gpg_fingerprint | quote }}
+
+[data]
+    android_home = {{ $android_home | quote }}
+    adb_vendor_keys = {{ $adb_vendor_keys | quote }}
