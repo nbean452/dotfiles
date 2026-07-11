@@ -16,6 +16,8 @@ M = {
     -- },
   },
 
+  nvdash = { load_on_startup = true },
+
   ui = {
     statusline = {
       theme = "default",
