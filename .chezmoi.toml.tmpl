@@ -8,7 +8,9 @@ encryption = "gpg"
     pager = "delta"
 
 [gpg]
-    recipient = {{ $gpg_fingerprint | quote }}
+    args = [
+        "--recipient", {{ $gpg_fingerprint | quote }}
+    ]
 
 [data]
     android_home = {{ $android_home | quote }}
