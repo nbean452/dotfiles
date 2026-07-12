@@ -1,6 +1,6 @@
-{{ $gpg_fingerprint := promptStringOnce . "gpg_fingerprint" "GPG Recipient - Enter your GPG key fingerprint or email" "gpg -k --keyid-format=long --with-fingerprint" -}}
-{{ $android_home := promptStringOnce . "android_home" "Android home - Where is the SDK located? (Relative to $HOME)" ".android/sdk" -}}
-{{ $adb_vendor_keys := promptStringOnce . "adb_vendor_keys" "ADB vendor key - Where are keys located? (Relative to $HOME)" ".android/adbkey" -}}
+{{ $commaSeparatedGpgFingerprints := promptStringOnce . "commaSeparatedGpgFingerprints" "Comma-separated GPG recipients - Enter your GPG key identifiers" "gpg -k --keyid-format=long --with-fingerprint" -}}
+{{ $androidHomeDirPath := promptStringOnce . "androidHomeDirPath" "Android home - Where is the SDK located? (Relative to $HOME)" ".android/sdk" -}}
+{{ $adbVendorKeyPath := promptStringOnce . "adbVendorKeyPath" "ADB vendor key - Where are keys located? (Relative to $HOME)" ".android/adbkey" -}}
 
 encryption = "gpg"
 
@@ -9,9 +9,11 @@ encryption = "gpg"
 
 [gpg]
     args = [
-        "--recipient", {{ $gpg_fingerprint | quote }}
+        {{ range (split "," $commaSeparatedGpgFingerprints) -}}
+        "--recipient",  {{ . | trim | quote }},
+        {{ end -}}
     ]
 
 [data]
-    android_home = {{ $android_home | quote }}
-    adb_vendor_keys = {{ $adb_vendor_keys | quote }}
+    androidHomeDirPath = {{ $androidHomeDirPath | quote }}
+    adbVendorKeyPath = {{ $adbVendorKeyPath | quote }}
