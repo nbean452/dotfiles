@@ -1,0 +1,2 @@
+indent_type = "Spaces"  # or "Spaces"
+indent_width = 4      # Number of spaces a single indent level represents
