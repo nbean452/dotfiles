@@ -32,18 +32,25 @@ set -g @fzf-url-fzf-options "-w 50% -h 50% --multi -0"
 # PowerKit plugin, https://github.com/fabioluciano/tmux-powerkit
 set -g @plugin "fabioluciano/tmux-powerkit"
 
-# Basic configuration
-set -g @powerkit_plugins "ssh,group(cpu,memory,uptime)"
+{{ if eq .chezmoi.username "nicb112" }}
 
-set -g @powerkit_theme "tokyo-night"
-set -g @powerkit_theme_variant "night"
+set -g @powerkit_theme "iceberg"
+set -g @powerkit_theme_variant "dark"
+
+{{ else }}
+
+set -g @powerkit_theme "horizon"
+set -g @powerkit_theme_variant "default"
+
+{{ end }}
+
 
 # Configure separator style
-set -g @powerkit_separator_style "slant"
-set -g @powerkit_status_order "session,windows,plugins"
-set -g @powerkit_icon_padding "3"
+set -g @powerkit_separator_style "none"
+set -g @powerkit_edge_separator_style "none"
+set -g @powerkit_status_order "session,windows"
 
-set -g @powerkit_elements_spacing "false"  # false, true, both, windows, plugins
+set -g @powerkit_elements_spacing "true"  # false, true, both, windows, plugins
 
 set -g status-position top
 
