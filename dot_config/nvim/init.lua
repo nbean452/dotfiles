@@ -49,8 +49,8 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 vim.opt.cursorcolumn = true -- to enable cursorcolumn!
-vim.opt.lazyredraw = true   -- equivalent to 'set lazyredraw'
-vim.opt.ttyfast = true      -- equivalent to 'set ttyfast'
+vim.opt.lazyredraw = true -- equivalent to 'set lazyredraw'
+vim.opt.ttyfast = true -- equivalent to 'set ttyfast'
 
 vim.opt.colorcolumn = "80"
 
@@ -61,7 +61,7 @@ vim.pack.add({
     -- Use for stability; omit to use `main` branch for the latest features
     { src = "https://github.com/tpope/vim-surround" },
     { src = "https://github.com/neovim/nvim-lspconfig" },
-    { src = "https://github.com/nvim-treesitter/nvim-treesitter",          branch = "main" },
+    { src = "https://github.com/nvim-treesitter/nvim-treesitter", branch = "main" },
     { src = "https://github.com/folke/lazydev.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim" },
 
@@ -85,7 +85,7 @@ vim.pack.add({
     { src = "https://github.com/kdheepak/lazygit.nvim" },
     { src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
 
-    { src = "https://github.com/nvim-mini/mini.notify",                    version = "stable" },
+    { src = "https://github.com/nvim-mini/mini.notify", version = "stable" },
     { src = "https://github.com/djoshea/vim-autoread" },
 
     { src = "https://github.com/nvim-tree/nvim-web-devicons" },
@@ -93,7 +93,7 @@ vim.pack.add({
     { src = "https://github.com/nvim-lualine/lualine.nvim" },
 
     { src = "https://github.com/nvim-lua/plenary.nvim" },
-    { src = "https://github.com/ThePrimeagen/harpoon",                     branch = "harpoon2" },
+    { src = "https://github.com/ThePrimeagen/harpoon", branch = "harpoon2" },
     { src = "https://github.com/folke/which-key.nvim" },
     { src = "https://github.com/haya14busa/is.vim" },
     { src = "https://github.com/kshenoy/vim-signature" },
@@ -150,9 +150,9 @@ require("lualine").setup({
         lualine_c = {
             {
                 "filename",
-                file_status = true,     -- Displays file status (readonly status, modified status)
+                file_status = true, -- Displays file status (readonly status, modified status)
                 newfile_status = false, -- Display new file status (new file means no write after created)
-                path = 1,               -- 0: Just the filename
+                path = 1, -- 0: Just the filename
                 -- 1: Relative path
                 -- 2: Absolute path
                 -- 3: Absolute path, with tilde as the home directory
@@ -163,10 +163,10 @@ require("lualine").setup({
                 -- It can also be a function that returns
                 -- the value of `shorting_target` dynamically.
                 symbols = {
-                    modified = "[+]",      -- Text to show when the file is modified.
-                    readonly = "[-]",      -- Text to show when the file is non-modifiable or readonly.
+                    modified = "[+]", -- Text to show when the file is modified.
+                    readonly = "[-]", -- Text to show when the file is non-modifiable or readonly.
                     unnamed = "[No Name]", -- Text to show for unnamed buffers.
-                    newfile = "[New]",     -- Text to show for newly created file before first write
+                    newfile = "[New]", -- Text to show for newly created file before first write
                 },
             },
         },
@@ -205,6 +205,11 @@ require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
     ensure_installed = {
+        "eslint",
+        "prettier",
+        "ruff",
+        "intelephense",
+        "basedpyright",
         "ts_ls",
         "lua_ls",
         "stylua",
@@ -235,7 +240,12 @@ vim.diagnostic.config({ virtual_text = false })
 -- })
 -- vim.cmd("colorscheme silence")
 
-vim.lsp.enable({ "lua_lsp", "ts_ls" })
+vim.lsp.enable({
+    "lua_lsp",
+    "ts_ls",
+    "intelephense",
+    "basedpyright",
+})
 
 -- buffer format
 vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
@@ -432,7 +442,7 @@ require("fzf-lua").setup({
     },
 })
 
--- Add current buffer to Harpoon list
+-- Add/remove current buffer to Harpoon list
 vim.keymap.set("n", "<C-q>f", function()
     -- get current buffer name
     local bufname = vim.fn.bufname("%")
@@ -444,18 +454,12 @@ vim.keymap.set("n", "<C-q>f", function()
     if name == nil then
         harpoon:list():add()
 
-        print(string.format('Added "%s" to harpoon list', bufname))
+        vim.notify(string.format('Added "%s" to harpoon list', bufname))
     else
         harpoon:list():remove()
-        print(string.format('Removed "%s" from harpoon list', bufname))
+        vim.notify(string.format('Removed "%s" from harpoon list', bufname))
     end
 end, { desc = "Add/remove current buffer to harpoon list" })
-
--- Add current buffer to Harpoon
-vim.keymap.set("n", "<C-q>f", function()
-    harpoon:list():add()
-    vim.notify("Added to Harpoon")
-end, { desc = "Add to harpoon list" })
 
 -- Toggle Harpoon menu
 vim.keymap.set("n", "<C-e>", function()
@@ -465,7 +469,7 @@ vim.keymap.set("n", "<C-e>", function()
         table.insert(file_paths, item.value)
     end
     if #file_paths == 0 then
-        print("Harpoon list is empty")
+        vim.notify("Harpoon list is empty")
         return
     end
     fzf_lua.fzf_exec(file_paths, {
