@@ -1,27 +1,27 @@
 vim.opt.shortmess:append("I")
-vim.o.number = true
-vim.o.relativenumber = true
-vim.o.shiftwidth = 4
-vim.o.wrap = false
-vim.o.scrolloff = 999
-vim.o.autoindent = true
-vim.o.expandtab = true
-vim.o.smartindent = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.shiftwidth = 4
+vim.opt.wrap = false
+vim.opt.scrolloff = 999
+vim.opt.autoindent = true
+vim.opt.expandtab = true
+vim.opt.smartindent = true
 
 -- https://github.com/kdheepak/lazygit.nvim#usage
 vim.g.lazygit_floating_window_scaling_factor = 0.95
 
-vim.o.hlsearch = true
-vim.o.incsearch = true
+vim.opt.hlsearch = true
+vim.opt.incsearch = true
 
 vim.g.mapleader = " "
-vim.o.clipboard = "unnamedplus"
-vim.o.signcolumn = "yes"
-vim.o.winborder = "single"
-vim.o.pumborder = "single"
+vim.opt.clipboard = "unnamedplus"
+vim.opt.signcolumn = "yes"
+vim.opt.winborder = "single"
+vim.opt.pumborder = "single"
 
-vim.o.ttimeout = true
-vim.o.timeoutlen = 0
+vim.opt.ttimeout = true
+vim.opt.timeoutlen = 0
 
 vim.keymap.set("n", "<leader>ri", function()
     vim.cmd.restart()
@@ -45,23 +45,23 @@ vim.keymap.set("n", "[d", function()
     vim.diagnostic.jump({ count = -1, float = true })
 end)
 
-vim.o.ignorecase = true
-vim.o.smartcase = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
-vim.o.cursorcolumn = true -- to enable cursorcolumn!
-vim.o.lazyredraw = true -- equivalent to 'set lazyredraw'
-vim.o.ttyfast = true -- equivalent to 'set ttyfast'
+vim.opt.cursorcolumn = true -- to enable cursorcolumn!
+vim.opt.lazyredraw = true   -- equivalent to 'set lazyredraw'
+vim.opt.ttyfast = true      -- equivalent to 'set ttyfast'
 
-vim.o.colorcolumn = "80"
+vim.opt.colorcolumn = "80"
 
-vim.o.cursorline = true
-vim.o.cursorlineopt = "both" -- to enable cursorline!
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "both" -- to enable cursorline!
 
 vim.pack.add({
     -- Use for stability; omit to use `main` branch for the latest features
     { src = "https://github.com/tpope/vim-surround" },
     { src = "https://github.com/neovim/nvim-lspconfig" },
-    { src = "https://github.com/nvim-treesitter/nvim-treesitter", branch = "main" },
+    { src = "https://github.com/nvim-treesitter/nvim-treesitter",          branch = "main" },
     { src = "https://github.com/folke/lazydev.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim" },
 
@@ -85,7 +85,7 @@ vim.pack.add({
     { src = "https://github.com/kdheepak/lazygit.nvim" },
     { src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
 
-    { src = "https://github.com/nvim-mini/mini.notify", version = "stable" },
+    { src = "https://github.com/nvim-mini/mini.notify",                    version = "stable" },
     { src = "https://github.com/djoshea/vim-autoread" },
 
     { src = "https://github.com/nvim-tree/nvim-web-devicons" },
@@ -93,7 +93,7 @@ vim.pack.add({
     { src = "https://github.com/nvim-lualine/lualine.nvim" },
 
     { src = "https://github.com/nvim-lua/plenary.nvim" },
-    { src = "https://github.com/ThePrimeagen/harpoon", branch = "harpoon2" },
+    { src = "https://github.com/ThePrimeagen/harpoon",                     branch = "harpoon2" },
     { src = "https://github.com/folke/which-key.nvim" },
     { src = "https://github.com/haya14busa/is.vim" },
     { src = "https://github.com/kshenoy/vim-signature" },
@@ -150,9 +150,9 @@ require("lualine").setup({
         lualine_c = {
             {
                 "filename",
-                file_status = true, -- Displays file status (readonly status, modified status)
+                file_status = true,     -- Displays file status (readonly status, modified status)
                 newfile_status = false, -- Display new file status (new file means no write after created)
-                path = 1, -- 0: Just the filename
+                path = 1,               -- 0: Just the filename
                 -- 1: Relative path
                 -- 2: Absolute path
                 -- 3: Absolute path, with tilde as the home directory
@@ -163,10 +163,10 @@ require("lualine").setup({
                 -- It can also be a function that returns
                 -- the value of `shorting_target` dynamically.
                 symbols = {
-                    modified = "[+]", -- Text to show when the file is modified.
-                    readonly = "[-]", -- Text to show when the file is non-modifiable or readonly.
+                    modified = "[+]",      -- Text to show when the file is modified.
+                    readonly = "[-]",      -- Text to show when the file is non-modifiable or readonly.
                     unnamed = "[No Name]", -- Text to show for unnamed buffers.
-                    newfile = "[New]", -- Text to show for newly created file before first write
+                    newfile = "[New]",     -- Text to show for newly created file before first write
                 },
             },
         },
@@ -211,9 +211,9 @@ require("mason-tool-installer").setup({
     },
 })
 
-vim.o.termguicolors = true
+vim.opt.termguicolors = true
 
-vim.o.background = "dark"
+vim.opt.background = "dark"
 vim.cmd("colorscheme neobones")
 
 require("tiny-inline-diagnostic").setup({
@@ -277,7 +277,7 @@ vim.keymap.set("n", "<leader>cse", "<CMD>CsvViewEnable<CR>", { desc = "Enable CS
 vim.keymap.set("n", "<leader>csd", "<CMD>CsvViewDisable<CR>", { desc = "Disable CSV view" })
 
 -- Enable persistent undo
-vim.o.undofile = true
+vim.opt.undofile = true
 
 vim.keymap.set("n", "gd", function()
     vim.lsp.buf.definition()
@@ -289,14 +289,14 @@ end)
 
 -- Set the directory to store undo files
 -- This keeps your main project directories clean
-vim.o.undodir = vim.fn.stdpath("state") .. "/undo"
+vim.opt.undodir = vim.fn.stdpath("state") .. "/undo"
 
 require("toggleterm").setup()
 
-vim.o.autocomplete = true
+vim.opt.autocomplete = true
 vim.opt.complete:append("o", "f")
 vim.opt.completeopt = { "menuone", "noselect" }
-vim.o.pumheight = 8
+vim.opt.pumheight = 8
 
 vim.keymap.set("n", "<A-i>", "<CMD>ToggleTerm size=40 direction=float<CR>")
 vim.keymap.set("t", "<A-i>", "<CMD>ToggleTerm<CR>")
