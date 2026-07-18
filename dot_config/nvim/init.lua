@@ -1,27 +1,80 @@
-vim.opt.shortmess:append("I")
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.shiftwidth = 4
-vim.opt.wrap = false
-vim.opt.scrolloff = 999
-vim.opt.autoindent = true
-vim.opt.expandtab = true
-vim.opt.smartindent = true
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+vim.opt.backup = false -- do not create a backup file
+vim.opt.writebackup = false -- do not write to a backup file
+vim.opt.swapfile = false -- do not create a swapfile
+vim.opt.undofile = true -- do create an undo file
+vim.opt.undodir = vim.fn.stdpath("state") .. "/undo" -- Set the directory to store undo files
+vim.opt.updatetime = 300 -- faster completion
+vim.opt.timeoutlen = 500 -- timeout duration
+vim.opt.ttimeoutlen = 50 -- key code timeout
+vim.opt.autoread = true -- auto-reload changes if outside of neovim
+vim.opt.autowrite = false -- do not auto-save
+
+vim.opt.shortmess:append("I") -- no splash screen
+vim.opt.number = true -- line number
+vim.opt.relativenumber = true -- relative line numbers
+vim.opt.cursorline = true -- highlight current line
+vim.opt.wrap = false -- do not wrap lines by default
+vim.opt.scrolloff = 999 -- keep 10 lines above/below cursor
+vim.opt.sidescrolloff = 10 -- keep 10 lines to left/right of cursor
+
+vim.opt.tabstop = 4 -- tabwidth
+vim.opt.shiftwidth = 4 -- indent width
+vim.opt.softtabstop = 4 -- soft tab stop not tabs on tab/backspace
+vim.opt.expandtab = true -- use spaces instead of tabs
+vim.opt.smartindent = true -- smart auto-indent
+vim.opt.autoindent = true -- copy indent from current line
+
+vim.opt.ignorecase = true -- case insensitive search
+vim.opt.smartcase = true -- case sensitive if uppercase in string
+vim.opt.hlsearch = true -- highlight search matches
+vim.opt.incsearch = true -- show matches as you type
+
+vim.opt.signcolumn = "yes" -- always show a sign column
+vim.opt.colorcolumn = "80" -- show a column at 100 position chars
+vim.opt.showmatch = true -- highlights matching brackets
+vim.opt.cmdheight = 1 -- single line command line
+vim.opt.completeopt = "menuone,noinsert,noselect" -- completion options
+vim.opt.showmode = false -- do not show the mode, instead have it in statusline
+vim.opt.pumheight = 10 -- popup menu height
+-- vim.opt.pumblend = 10 -- popup menu transparency
+-- vim.opt.winblend = 0 -- floating window transparency
+-- vim.opt.conceallevel = 2 -- obsidian requirement
+-- vim.opt.concealcursor = "" -- do not hide cursorline in markup
+vim.opt.synmaxcol = 300 -- syntax highlighting limit
+vim.opt.fillchars = { eob = " " } -- hide "~" on empty lines
 
 -- https://github.com/kdheepak/lazygit.nvim#usage
 vim.g.lazygit_floating_window_scaling_factor = 0.95
 
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
-
-vim.g.mapleader = " "
-vim.opt.clipboard = "unnamedplus"
-vim.opt.signcolumn = "yes"
 vim.opt.winborder = "single"
 vim.opt.pumborder = "single"
 
+vim.opt.hidden = true -- allow hidden buffers
+vim.opt.errorbells = false -- no error sounds
+vim.opt.backspace = "indent,eol,start" -- better backspace behaviour
+vim.opt.autochdir = false -- do not autochange directories
+vim.opt.iskeyword:append("-") -- include - in words
+vim.opt.path:append("**") -- include subdirs in search
+vim.opt.selection = "inclusive" -- include last char in selection
+vim.opt.mouse = "a" -- enable mouse support
+vim.opt.clipboard:append("unnamedplus") -- use system clipboard
+vim.opt.modifiable = true -- allow buffer modifications
+
+vim.opt.splitbelow = true -- horizontal splits go below
+vim.opt.splitright = true -- vertical splits go right
+
+vim.opt.wildmenu = true -- tab completion
+vim.opt.wildmode = "longest:full,full" -- complete longest common match, full completion list, cycle through with Tab
+vim.opt.diffopt:append("linematch:60") -- improve diff display
+vim.opt.redrawtime = 10000 -- increase neovim redraw tolerance
+vim.opt.maxmempattern = 20000 -- increase max memory
+
 vim.opt.ttimeout = true
-vim.opt.timeoutlen = 0
+
+vim.keymap.set("n", "<Esc>", "<CMD>nohlsearch<CR>")
 
 vim.keymap.set("n", "<leader>ri", function()
     vim.cmd.restart()
@@ -45,57 +98,41 @@ vim.keymap.set("n", "[d", function()
     vim.diagnostic.jump({ count = -1, float = true })
 end)
 
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
 vim.opt.cursorcolumn = true -- to enable cursorcolumn!
 vim.opt.lazyredraw = true -- equivalent to 'set lazyredraw'
 vim.opt.ttyfast = true -- equivalent to 'set ttyfast'
-
-vim.opt.colorcolumn = "80"
-
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both" -- to enable cursorline!
 
 vim.pack.add({
-    -- Use for stability; omit to use `main` branch for the latest features
     { src = "https://github.com/tpope/vim-surround" },
     { src = "https://github.com/neovim/nvim-lspconfig" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", branch = "main" },
     { src = "https://github.com/folke/lazydev.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim" },
-
     { src = "https://github.com/mason-org/mason.nvim" },
     { src = "https://github.com/mason-org/mason-lspconfig.nvim" },
     { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
-
     { src = "https://github.com/shrynx/line-numbers.nvim" },
-
     { src = "https://github.com/chenasraf/text-transform.nvim" },
-
     { src = "https://github.com/christoomey/vim-tmux-navigator" },
-
     { src = "https://github.com/windwp/nvim-autopairs" },
     { src = "https://github.com/alvan/vim-closetag" },
-
     { src = "https://github.com/ibhagwan/fzf-lua" },
     { src = "https://github.com/stevearc/oil.nvim" },
     { src = "https://github.com/danhat1020/silence.nvim" },
-
     { src = "https://github.com/kdheepak/lazygit.nvim" },
     { src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
-
     { src = "https://github.com/nvim-mini/mini.notify", version = "stable" },
+    { src = "https://github.com/nvim-mini/mini.icons" },
+    { src = "https://github.com/nvim-mini/mini.cursorword" },
+    { src = "https://github.com/nvim-mini/mini.trailspace" },
     { src = "https://github.com/djoshea/vim-autoread" },
-
-    { src = "https://github.com/nvim-tree/nvim-web-devicons" },
     { src = "https://github.com/stefandtw/quickfix-reflector.vim" },
     { src = "https://github.com/nvim-lualine/lualine.nvim" },
-
     { src = "https://github.com/nvim-lua/plenary.nvim" },
     { src = "https://github.com/ThePrimeagen/harpoon", branch = "harpoon2" },
     { src = "https://github.com/folke/which-key.nvim" },
-    { src = "https://github.com/haya14busa/is.vim" },
     { src = "https://github.com/kshenoy/vim-signature" },
     { src = "https://github.com/hat0uma/csvview.nvim" },
     { src = "https://github.com/lukas-reineke/indent-blankline.nvim" },
@@ -191,6 +228,9 @@ require("lualine").setup({
 require("gitsigns").setup()
 require("lazydev").setup()
 require("mini.notify").setup()
+require("mini.icons").setup()
+require("mini.cursorword").setup()
+require("mini.trailspace").setup({})
 require("oil").setup()
 require("line-numbers").setup({})
 require("text-transform").setup({
@@ -220,6 +260,11 @@ vim.opt.termguicolors = true
 
 vim.opt.background = "dark"
 vim.cmd("colorscheme neobones")
+
+vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Move to left window/pane" })
+vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Move to bottom window/pane" })
+vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Move to top window/pane" })
+vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Move to right window/pane" })
 
 require("tiny-inline-diagnostic").setup({
     -- Available: "modern", "classic", "minimal", "powerline", "ghost", "simple", "nonerdfont", "amongus"
@@ -253,7 +298,6 @@ vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
 -- new and close buffers
 vim.keymap.set("n", "<leader>b", "<CMD>enew<CR>")
 vim.keymap.set("n", "<leader>x", "<CMD>bd<CR>")
-vim.keymap.set("n", "<leader>dab", "<CMD>%bd<CR>")
 
 vim.keymap.set("n", "<Tab>", "<CMD>bnext<CR>")
 vim.keymap.set("n", "<S-Tab>", "<CMD>bprev<CR>")
@@ -268,11 +312,19 @@ vim.keymap.set("n", "<leader>fg", "<CMD>FzfLua git_status<CR>")
 vim.keymap.set("n", "<leader>fk", "<CMD>FzfLua keymaps<CR>")
 vim.keymap.set("n", "<leader>fr", "<CMD>FzfLua registers<CR>")
 vim.keymap.set("n", "<leader>fm", "<CMD>FzfLua marks<CR>")
+vim.keymap.set("n", "<leader>fi", "<CMD>FzfLua lsp_implementations<CR>")
+vim.keymap.set("n", "<leader>fs", "<CMD>FzfLua lsp_document_symbols<CR>")
 
 vim.keymap.set("n", "<leader>gb", "<CMD>Gitsigns blame_line<CR>")
 
 vim.keymap.set("n", "<leader>lg", "<CMD>LazyGit<CR>")
 vim.keymap.set("n", "<leader>lc", "<CMD>LazyGitFilterCurrentFile<CR>")
+
+vim.keymap.set("n", "<leader>ld", function()
+    vim.diagnostic.setloclist({ open = true })
+end, { desc = "Open diagnostic list" })
+
+vim.keymap.set("n", "<leader>ld", "<CMD>copen<CR>", { desc = "Open quickfix list" })
 
 vim.keymap.set("n", "<C-s>", "<CMD>w<CR>")
 vim.keymap.set("n", "<C-w>q", "<CMD>wq<CR>")
@@ -289,27 +341,23 @@ vim.keymap.set("n", "<leader>csd", "<CMD>CsvViewDisable<CR>", { desc = "Disable 
 -- Enable persistent undo
 vim.opt.undofile = true
 
-vim.keymap.set("n", "gd", function()
-    vim.lsp.buf.definition()
-end)
+vim.keymap.set("n", "gd", vim.lsp.buf.definition)
+vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action)
+vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
 
 vim.keymap.set("n", "gr", function()
     vim.lsp.buf.references()
 end)
 
--- Set the directory to store undo files
--- This keeps your main project directories clean
-vim.opt.undodir = vim.fn.stdpath("state") .. "/undo"
-
 require("toggleterm").setup()
 
 vim.opt.autocomplete = true
 vim.opt.complete:append("o", "f")
-vim.opt.completeopt = { "menuone", "noselect" }
 vim.opt.pumheight = 8
 
 vim.keymap.set("n", "<A-i>", "<CMD>ToggleTerm size=40 direction=float<CR>")
 vim.keymap.set("t", "<A-i>", "<CMD>ToggleTerm<CR>")
+vim.keymap.set("t", "<C-x>", "<C-\\><C-n>")
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(ev)
@@ -325,6 +373,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
             vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
         end
+    end,
+})
+
+-- wrap, linebreak and spellcheck on markdown and text files
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "markdown", "text", "gitcommit" },
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+        vim.opt_local.spell = true
     end,
 })
 
