@@ -51,7 +51,7 @@ vim.opt.cmdheight = 1 -- single line command line
 vim.opt.completeopt = "menuone,noinsert,noselect" -- completion options
 vim.opt.showmode = false -- do not show the mode, instead have it in statusline
 vim.opt.pumheight = 10 -- popup menu height
--- vim.opt.pumblend = 10 -- popup menu transparency
+vim.opt.pumblend = 0 -- popup menu transparency
 -- vim.opt.winblend = 0 -- floating window transparency
 -- vim.opt.conceallevel = 2 -- obsidian requirement
 -- vim.opt.concealcursor = "" -- do not hide cursorline in markup
@@ -133,6 +133,7 @@ vim.pack.add({
     { src = "https://github.com/shrynx/line-numbers.nvim" },
     { src = "https://github.com/chenasraf/text-transform.nvim" },
     { src = "https://github.com/christoomey/vim-tmux-navigator" },
+    { src = "http://github.com/windwp/nvim-ts-autotag" },
     { src = "https://github.com/windwp/nvim-autopairs" },
     { src = "https://github.com/alvan/vim-closetag" },
     { src = "https://github.com/ibhagwan/fzf-lua" },
@@ -158,6 +159,11 @@ vim.pack.add({
     { src = "https://github.com/JezerM/oil-lsp-diagnostics.nvim" },
     { src = "https://github.com/creativenull/efmls-configs-nvim" },
     { src = "https://github.com/vim-scripts/dbext.vim" },
+    { src = "https://github.com/L3MON4D3/LuaSnip" },
+    {
+        src = "https://github.com/saghen/blink.cmp",
+        version = vim.version.range("1.*"),
+    },
 })
 
 require("ibl").setup()
@@ -166,7 +172,7 @@ require("nvim-autopairs").setup()
 require("which-key").setup({
     preset = "modern",
 })
-
+require("nvim-ts-autotag").setup()
 require("lualine").setup({
     options = {
         icons_enabled = false,
@@ -391,8 +397,8 @@ do
     local pylint = require("efmls-configs.linters.pylint")
     local ruff = require("efmls-configs.formatters.ruff")
 
-    local prettier = require("efmls-configs.formatters.prettier")
-    local eslint = require("efmls-configs.linters.eslint")
+    local prettier = require("efmls-configs.formatters.prettier_d")
+    local eslint = require("efmls-configs.linters.eslint_d")
 
     local shellcheck = require("efmls-configs.linters.shellcheck")
     local shfmt = require("efmls-configs.formatters.shfmt")
@@ -468,6 +474,40 @@ do
     )
 end
 
+require("blink.cmp").setup({
+    keymap = {
+        preset = "none",
+        ["<C-k>"] = { "show", "hide" },
+        ["<CR>"] = { "accept", "fallback" },
+        ["<C-n>"] = { "select_next", "fallback" },
+        ["<C-p>"] = { "select_prev", "fallback" },
+        -- ["<Tab>"] = { "snippet_forward", "fallback" },
+        -- ["<S-Tab>"] = { "snippet_backward", "fallback" },
+    },
+    appearance = { nerd_font_variant = "mono" },
+    completion = {
+        documentation = { auto_show = true },
+        menu = {
+            auto_show = function()
+                return vim.bo.filetype ~= "markdown"
+            end,
+        },
+    },
+    sources = { default = { "lsp", "path", "buffer", "snippets" } },
+    snippets = {
+        expand = function(snippet)
+            require("luasnip").lsp_expand(snippet)
+        end,
+    },
+    fuzzy = {
+        implementation = "prefer_rust",
+        prebuilt_binaries = { download = true },
+    },
+})
+vim.lsp.config["*"] = {
+    capabilities = require("blink.cmp").get_lsp_capabilities(),
+}
+
 vim.lsp.enable({
     "docker_compose_language_service",
     "yamlls",
@@ -497,6 +537,7 @@ vim.keymap.set("n", "<Tab>", "<CMD>bnext<CR>")
 vim.keymap.set("n", "<S-Tab>", "<CMD>bprev<CR>")
 
 vim.keymap.set("n", "<leader>ff", "<CMD>FzfLua files<CR>")
+vim.keymap.set("n", "<leader>fo", "<CMD>FzfLua oldfiles<CR>")
 vim.keymap.set("n", "<leader>fd", "<CMD>FzfLua diagnostics_document<CR>")
 vim.keymap.set("n", "<leader>fD", "<CMD>FzfLua diagnostics_workspace<CR>")
 vim.keymap.set("n", "<leader>fw", "<CMD>FzfLua grep_project<CR>")
@@ -550,30 +591,30 @@ end)
 
 require("toggleterm").setup()
 
-vim.opt.autocomplete = true
-vim.opt.complete:append("o", "f")
+-- vim.opt.autocomplete = true
+-- vim.opt.complete:append("o", "f")
 vim.opt.pumheight = 8
 
 vim.keymap.set("n", "<A-i>", "<CMD>ToggleTerm size=40 direction=float<CR>")
 vim.keymap.set("t", "<A-i>", "<CMD>ToggleTerm<CR>")
 vim.keymap.set("t", "<C-x>", "<C-\\><C-n>")
 
-vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(ev)
-        local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
-        -- Enable auto-completion. Note: Use CTRL-Y to select an item. |complete_CTRL-Y|
-        if client:supports_method("textDocument/completion") then
-            -- Optional: trigger autocompletion on EVERY keypress. May be slow!
-            local chars = {}
-            for i = 32, 126 do
-                table.insert(chars, string.char(i))
-            end
-            client.server_capabilities.completionProvider.triggerCharacters = chars
-
-            vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-        end
-    end,
-})
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--     callback = function(ev)
+--         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
+--         -- Enable auto-completion. Note: Use CTRL-Y to select an item. |complete_CTRL-Y|
+--         if client:supports_method("textDocument/completion") then
+--             -- Optional: trigger autocompletion on EVERY keypress. May be slow!
+--             local chars = {}
+--             for i = 32, 126 do
+--                 table.insert(chars, string.char(i))
+--             end
+--             client.server_capabilities.completionProvider.triggerCharacters = chars
+--
+--             vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+--         end
+--     end,
+-- })
 
 -- wrap, linebreak and spellcheck on markdown and text files
 vim.api.nvim_create_autocmd("FileType", {
@@ -604,9 +645,9 @@ vim.keymap.set("n", "<leader>gh", function()
     }, function(choice)
         -- Handle the callback after selection
         if choice == "1" then
-            vim.cmd("silent !gh browse %")
+            vim.cmd("silent !gh browse %:.")
         elseif choice == "2" then
-            vim.cmd("silent !gh browse % --branch $(git rev-parse HEAD)")
+            vim.cmd("silent !gh browse %:. --branch $(git rev-parse HEAD)")
         elseif choice == "3" then
             vim.cmd("silent !gh browse $(git rev-parse HEAD)")
         else

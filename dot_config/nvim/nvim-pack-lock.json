@@ -1,5 +1,14 @@
 {
   "plugins": {
+    "LuaSnip": {
+      "rev": "0abc8f390b278c3b4aabc4c004ac8a088b65cf24",
+      "src": "https://github.com/L3MON4D3/LuaSnip"
+    },
+    "blink.cmp": {
+      "rev": "78336bc89ee5365633bcf754d93df01678b5c08f",
+      "src": "https://github.com/saghen/blink.cmp",
+      "version": "1.0.0 - 2.0.0"
+    },
     "comment.nvim": {
       "rev": "e30b7f2008e52442154b66f7c519bfd2f1e32acb",
       "src": "https://github.com/numtostr/comment.nvim"
@@ -92,6 +101,10 @@
     "nvim-treesitter": {
       "rev": "d0bf5ff2b00939eab39c6572aec7cf232f843b1f",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "nvim-ts-autotag": {
+      "rev": "88c1453db4ba7dd24131086fe51fdf74e587d275",
+      "src": "http://github.com/windwp/nvim-ts-autotag"
     },
     "oil-git-status.nvim": {
       "rev": "a3e2ccb00cb8822115e28a9a1791eda051d940c9",
