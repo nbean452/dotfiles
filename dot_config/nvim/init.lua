@@ -1,16 +1,28 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+local undodir = vim.fn.expand("~/.vim/undodir")
+if
+    vim.fn.isdirectory(undodir) == 0 -- create undodir if nonexistent
+then
+    vim.fn.mkdir(undodir, "p")
+end
+
 vim.opt.backup = false -- do not create a backup file
 vim.opt.writebackup = false -- do not write to a backup file
 vim.opt.swapfile = false -- do not create a swapfile
 vim.opt.undofile = true -- do create an undo file
-vim.opt.undodir = vim.fn.stdpath("state") .. "/undo" -- Set the directory to store undo files
+vim.opt.undodir = undodir -- Set the directory to store undo files
 vim.opt.updatetime = 300 -- faster completion
 vim.opt.timeoutlen = 500 -- timeout duration
 vim.opt.ttimeoutlen = 50 -- key code timeout
 vim.opt.autoread = true -- auto-reload changes if outside of neovim
 vim.opt.autowrite = false -- do not auto-save
+
+-- Folding: requires treesitter available at runtime; safe fallback if not
+vim.opt.foldmethod = "expr" -- use expression for folding
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- use treesitter for folding
+vim.opt.foldlevel = 99 -- start with all folds open
 
 vim.opt.shortmess:append("I") -- no splash screen
 vim.opt.number = true -- line number
@@ -86,17 +98,16 @@ vim.keymap.set("n", "<leader>so", function()
     vim.notify("reloaded configuration!")
 end)
 
-vim.keymap.del("n", "]d")
-vim.keymap.del("n", "[d")
-vim.keymap.del("n", "]D")
-vim.keymap.del("n", "[D")
-
-vim.keymap.set("n", "]d", function()
-    vim.diagnostic.jump({ count = 1, float = true })
-end)
-vim.keymap.set("n", "[d", function()
-    vim.diagnostic.jump({ count = -1, float = true })
-end)
+-- vim.keymap.del("n", "]d")
+-- vim.keymap.del("n", "[d")
+-- vim.keymap.del("n", "]D")
+-- vim.keymap.del("n", "[D")
+-- vim.keymap.set("n", "]d", function()
+--     vim.diagnostic.jump({ count = 1, float = true })
+-- end)
+-- vim.keymap.set("n", "[d", function()
+--     vim.diagnostic.jump({ count = -1, float = true })
+-- end)
 
 vim.opt.cursorcolumn = true -- to enable cursorcolumn!
 vim.opt.lazyredraw = true -- equivalent to 'set lazyredraw'
@@ -105,9 +116,14 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both" -- to enable cursorline!
 
 vim.pack.add({
+    { src = "https://github.com/tpope/vim-repeat" },
     { src = "https://github.com/tpope/vim-surround" },
     { src = "https://github.com/neovim/nvim-lspconfig" },
-    { src = "https://github.com/nvim-treesitter/nvim-treesitter", branch = "main" },
+    {
+        src = "https://github.com/nvim-treesitter/nvim-treesitter",
+        branch = "d0bf5ff2b00939eab39c6572aec7cf232f843b1f",
+        build = ":TSUpdate",
+    },
     { src = "https://github.com/folke/lazydev.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim" },
     { src = "https://github.com/mason-org/mason.nvim" },
@@ -120,14 +136,12 @@ vim.pack.add({
     { src = "https://github.com/alvan/vim-closetag" },
     { src = "https://github.com/ibhagwan/fzf-lua" },
     { src = "https://github.com/stevearc/oil.nvim" },
-    { src = "https://github.com/danhat1020/silence.nvim" },
     { src = "https://github.com/kdheepak/lazygit.nvim" },
     { src = "https://github.com/rachartier/tiny-inline-diagnostic.nvim" },
     { src = "https://github.com/nvim-mini/mini.notify", version = "stable" },
     { src = "https://github.com/nvim-mini/mini.icons" },
     { src = "https://github.com/nvim-mini/mini.cursorword" },
     { src = "https://github.com/nvim-mini/mini.trailspace" },
-    { src = "https://github.com/djoshea/vim-autoread" },
     { src = "https://github.com/stefandtw/quickfix-reflector.vim" },
     { src = "https://github.com/nvim-lualine/lualine.nvim" },
     { src = "https://github.com/nvim-lua/plenary.nvim" },
@@ -139,6 +153,9 @@ vim.pack.add({
     { src = "https://github.com/akinsho/toggleterm.nvim" },
     { src = "https://github.com/rktjmp/lush.nvim" },
     { src = "https://github.com/zenbones-theme/zenbones.nvim" },
+    { src = "https://github.com/refractalize/oil-git-status.nvim" },
+    { src = "https://github.com/JezerM/oil-lsp-diagnostics.nvim" },
+    { src = "https://github.com/creativenull/efmls-configs-nvim" },
 })
 
 require("ibl").setup()
@@ -231,7 +248,79 @@ require("mini.notify").setup()
 require("mini.icons").setup()
 require("mini.cursorword").setup()
 require("mini.trailspace").setup({})
-require("oil").setup()
+
+-- helper function to parse output
+local function parse_output(proc)
+    local result = proc:wait()
+    local ret = {}
+    if result.code == 0 then
+        for line in vim.gsplit(result.stdout, "\n", { plain = true, trimempty = true }) do
+            -- Remove trailing slash
+            line = line:gsub("/$", "")
+            ret[line] = true
+        end
+    end
+    return ret
+end
+
+-- build git status cache
+local function new_git_status()
+    return setmetatable({}, {
+        __index = function(self, key)
+            local ignore_proc = vim.system(
+                { "git", "ls-files", "--ignored", "--exclude-standard", "--others", "--directory" },
+                {
+                    cwd = key,
+                    text = true,
+                }
+            )
+            local tracked_proc = vim.system({ "git", "ls-tree", "HEAD", "--name-only" }, {
+                cwd = key,
+                text = true,
+            })
+            local ret = {
+                ignored = parse_output(ignore_proc),
+                tracked = parse_output(tracked_proc),
+            }
+
+            rawset(self, key, ret)
+            return ret
+        end,
+    })
+end
+local git_status = new_git_status()
+
+-- Clear git status cache on refresh
+local refresh = require("oil.actions").refresh
+local orig_refresh = refresh.callback
+refresh.callback = function(...)
+    git_status = new_git_status()
+    orig_refresh(...)
+end
+
+require("oil").setup({
+    win_options = {
+        signcolumn = "yes:2",
+    },
+    view_options = {
+        is_hidden_file = function(name, bufnr)
+            local dir = require("oil").get_current_dir(bufnr)
+            local is_dotfile = vim.startswith(name, ".") and name ~= ".."
+            -- if no local directory (e.g. for ssh connections), just hide dotfiles
+            if not dir then
+                return is_dotfile
+            end
+            -- dotfiles are considered hidden unless tracked
+            if is_dotfile then
+                return not git_status[dir].tracked[name]
+            else
+                -- Check if file is gitignored
+                return git_status[dir].ignored[name]
+            end
+        end,
+    },
+})
+require("oil-git-status").setup({})
 require("line-numbers").setup({})
 require("text-transform").setup({
     popup_type = "select",
@@ -245,14 +334,26 @@ require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
     ensure_installed = {
+        "bashls",
+        "shfmt",
+        "shellcheck",
+        "tailwindcss",
+        "clangd",
+        "clang-format",
+        "cpplint",
+        "sleek",
+        "yamlfix",
         "eslint",
         "prettier",
         "ruff",
+        "pylint",
+        "pyright",
         "intelephense",
-        "basedpyright",
         "ts_ls",
         "lua_ls",
         "stylua",
+        "vacuum",
+        "efm",
     },
 })
 
@@ -274,26 +375,106 @@ require("tiny-inline-diagnostic").setup({
             enabled = true,
         },
         add_messages = {
-            display_count = true,
+            display_count = false,
         },
     },
 })
 vim.diagnostic.config({ virtual_text = false })
 
--- require("silence").setup({
---     -- options here (see configuration)
--- })
--- vim.cmd("colorscheme silence")
+do
+    -- local luacheck = require("efmls-configs.linters.luacheck")
+    local stylua = require("efmls-configs.formatters.stylua")
+
+    local pylint = require("efmls-configs.linters.pylint")
+    local ruff = require("efmls-configs.formatters.ruff")
+
+    local prettier = require("efmls-configs.formatters.prettier")
+    local eslint = require("efmls-configs.linters.eslint")
+
+    local shellcheck = require("efmls-configs.linters.shellcheck")
+    local shfmt = require("efmls-configs.formatters.shfmt")
+
+    local cpplint = require("efmls-configs.linters.cpplint")
+    local clangfmt = require("efmls-configs.formatters.clang_format")
+
+    local efmls_config = {
+        filetypes = {
+            "c",
+            "cpp",
+            "css",
+            "go",
+            "html",
+            "javascript",
+            "javascriptreact",
+            "json",
+            "jsonc",
+            "lua",
+            "markdown",
+            "python",
+            "sh",
+            "typescript",
+            "typescriptreact",
+            "angular",
+        },
+        init_options = {
+            documentFormatting = true,
+            documentRangeFormatting = true,
+        },
+        settings = {
+            rootMarkers = { ".git/" },
+            languages = {
+                c = { clangfmt, cpplint },
+                cpp = { clangfmt, cpplint },
+                css = { prettier },
+                html = { prettier },
+                javascript = { eslint, prettier },
+                javascriptreact = { eslint, prettier },
+                json = { eslint, prettier },
+                jsonc = { eslint, prettier },
+                lua = { stylua },
+                markdown = { prettier },
+                python = { pylint, ruff },
+                sh = { shellcheck, shfmt },
+                typescript = { eslint, prettier },
+                typescriptreact = { eslint, prettier },
+                vue = { eslint, prettier },
+                svelte = { eslint, prettier },
+            },
+        },
+    }
+
+    vim.lsp.config(
+        "efm",
+        vim.tbl_extend("force", efmls_config, {
+            cmd = { "efm-langserver" },
+
+            -- Pass your custom lsp config below like on_attach and capabilities
+            --
+            -- on_attach = on_attach,
+            -- capabilities = capabilities,
+        })
+    )
+end
 
 vim.lsp.enable({
+    "docker_compose_language_service",
+    "yamlls",
+    "bashls",
+    "clangd",
     "lua_lsp",
     "ts_ls",
     "intelephense",
-    "basedpyright",
+    "pyright",
+    "efm",
 })
 
 -- buffer format
-vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>lf", function()
+    vim.lsp.buf.format({
+        name = "efm",
+        async = false,
+    })
+end)
 
 -- new and close buffers
 vim.keymap.set("n", "<leader>b", "<CMD>enew<CR>")
@@ -304,6 +485,7 @@ vim.keymap.set("n", "<S-Tab>", "<CMD>bprev<CR>")
 
 vim.keymap.set("n", "<leader>ff", "<CMD>FzfLua files<CR>")
 vim.keymap.set("n", "<leader>fd", "<CMD>FzfLua diagnostics_document<CR>")
+vim.keymap.set("n", "<leader>fD", "<CMD>FzfLua diagnostics_workspace<CR>")
 vim.keymap.set("n", "<leader>fw", "<CMD>FzfLua grep_project<CR>")
 vim.keymap.set("n", "<leader>fh", "<CMD>FzfLua helptags<CR>")
 vim.keymap.set("n", "<leader>fb", "<CMD>FzfLua buffers<CR>")
@@ -314,6 +496,10 @@ vim.keymap.set("n", "<leader>fr", "<CMD>FzfLua registers<CR>")
 vim.keymap.set("n", "<leader>fm", "<CMD>FzfLua marks<CR>")
 vim.keymap.set("n", "<leader>fi", "<CMD>FzfLua lsp_implementations<CR>")
 vim.keymap.set("n", "<leader>fs", "<CMD>FzfLua lsp_document_symbols<CR>")
+
+vim.keymap.set("n", "<leader>ts", function()
+    require("mini.trailspace").trim()
+end)
 
 vim.keymap.set("n", "<leader>gb", "<CMD>Gitsigns blame_line<CR>")
 
@@ -553,3 +739,58 @@ end, { desc = "Select harpoon file 3" })
 vim.keymap.set("n", "<C-p>", function()
     harpoon:list():select(4)
 end, { desc = "Select harpoon file 4" })
+
+vim.keymap.set("n", "<leader>ss", "<cmd>set shiftwidth=2 tabstop=2 expandtab<CR>", { desc = "Set 2 tabs" })
+vim.keymap.set("n", "<leader>sl", "<cmd>set shiftwidth=4 tabstop=4 expandtab<CR>", { desc = "Set 4 tabs" })
+
+local setup_treesitter = function()
+    local treesitter = require("nvim-treesitter")
+    treesitter.setup({})
+    local ensure_installed = {
+        "vim",
+        "vimdoc",
+        -- "rust",
+        "c",
+        "cpp",
+        "go",
+        "html",
+        "css",
+        "javascript",
+        "json",
+        "lua",
+        "markdown",
+        "python",
+        "typescript",
+        "bash",
+        "angular",
+        "php",
+        "tsx",
+    }
+
+    local config = require("nvim-treesitter.config")
+
+    local already_installed = config.get_installed()
+    local parsers_to_install = {}
+
+    for _, parser in ipairs(ensure_installed) do
+        if not vim.tbl_contains(already_installed, parser) then
+            table.insert(parsers_to_install, parser)
+        end
+    end
+
+    if #parsers_to_install > 0 then
+        treesitter.install(parsers_to_install)
+    end
+
+    local group = vim.api.nvim_create_augroup("TreeSitterConfig", { clear = true })
+    vim.api.nvim_create_autocmd("FileType", {
+        group = group,
+        callback = function(args)
+            if vim.list_contains(config.get_installed(), vim.treesitter.language.get_lang(args.match)) then
+                vim.treesitter.start(args.buf)
+            end
+        end,
+    })
+end
+
+setup_treesitter()
