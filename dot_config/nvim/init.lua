@@ -119,6 +119,7 @@ vim.pack.add({
     { src = "https://github.com/tpope/vim-repeat" },
     { src = "https://github.com/tpope/vim-surround" },
     { src = "https://github.com/neovim/nvim-lspconfig" },
+    { src = "https://github.com/djoshea/vim-autoread" },
     {
         src = "https://github.com/nvim-treesitter/nvim-treesitter",
         branch = "d0bf5ff2b00939eab39c6572aec7cf232f843b1f",
@@ -156,6 +157,7 @@ vim.pack.add({
     { src = "https://github.com/refractalize/oil-git-status.nvim" },
     { src = "https://github.com/JezerM/oil-lsp-diagnostics.nvim" },
     { src = "https://github.com/creativenull/efmls-configs-nvim" },
+    { src = "https://github.com/vim-scripts/dbext.vim" },
 })
 
 require("ibl").setup()
@@ -334,6 +336,7 @@ require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
     ensure_installed = {
+        "sqls",
         "bashls",
         "shfmt",
         "shellcheck",
@@ -397,6 +400,13 @@ do
     local cpplint = require("efmls-configs.linters.cpplint")
     local clangfmt = require("efmls-configs.formatters.clang_format")
 
+    local command = "sleek ${INPUT}"
+
+    local sleek = {
+        formatCommand = command,
+        formatStdin = true,
+    }
+
     local efmls_config = {
         filetypes = {
             "c",
@@ -415,6 +425,7 @@ do
             "typescript",
             "typescriptreact",
             "angular",
+            "sql",
         },
         init_options = {
             documentFormatting = true,
@@ -439,6 +450,7 @@ do
                 typescriptreact = { eslint, prettier },
                 vue = { eslint, prettier },
                 svelte = { eslint, prettier },
+                sql = { sleek },
             },
         },
     }
@@ -465,6 +477,7 @@ vim.lsp.enable({
     "ts_ls",
     "intelephense",
     "pyright",
+    "sqls",
     "efm",
 })
 

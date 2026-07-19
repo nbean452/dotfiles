@@ -8,6 +8,10 @@
       "rev": "5c22774c3ecc7f8883af5d143b366e45b1f0875d",
       "src": "https://github.com/hat0uma/csvview.nvim"
     },
+    "dbext.vim": {
+      "rev": "14f3d530b6189dc3f97edfa70b7a36006e21148c",
+      "src": "https://github.com/vim-scripts/dbext.vim"
+    },
     "efmls-configs-nvim": {
       "rev": "e872dc195336716b19023b7a4dd9f689352acc8d",
       "src": "https://github.com/creativenull/efmls-configs-nvim"
@@ -120,6 +124,10 @@
     "toggleterm.nvim": {
       "rev": "9a88eae817ef395952e08650b3283726786fb5fb",
       "src": "https://github.com/akinsho/toggleterm.nvim"
+    },
+    "vim-autoread": {
+      "rev": "24061f84652d768bfb85d222c88580b3af138dab",
+      "src": "https://github.com/djoshea/vim-autoread"
     },
     "vim-closetag": {
       "rev": "d0a562f8bdb107a50595aefe53b1a690460c3822",
