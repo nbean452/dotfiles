@@ -19,7 +19,7 @@ show_always = true
 
 [hostname]
 ssh_only = false
-format = "[$ssh_symbol](bold blue italic)"
+format = "[$ssh_symbol](bold blue italic)@[$hostname]"
 ssh_symbol="-sshed"
 disabled = false
 
