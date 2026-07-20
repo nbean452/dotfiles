@@ -53,8 +53,7 @@ vim.opt.showmode = false -- do not show the mode, instead have it in statusline
 vim.opt.pumheight = 10 -- popup menu height
 vim.opt.pumblend = 0 -- popup menu transparency
 -- vim.opt.winblend = 0 -- floating window transparency
--- vim.opt.conceallevel = 2 -- obsidian requirement
--- vim.opt.concealcursor = "" -- do not hide cursorline in markup
+vim.opt.concealcursor = "" -- do not hide cursorline in markup
 vim.opt.synmaxcol = 300 -- syntax highlighting limit
 vim.opt.fillchars = { eob = " " } -- hide "~" on empty lines
 
@@ -157,9 +156,9 @@ vim.pack.add({
     { src = "https://github.com/zenbones-theme/zenbones.nvim" },
     { src = "https://github.com/refractalize/oil-git-status.nvim" },
     { src = "https://github.com/JezerM/oil-lsp-diagnostics.nvim" },
-    { src = "https://github.com/creativenull/efmls-configs-nvim" },
     { src = "https://github.com/vim-scripts/dbext.vim" },
     { src = "https://github.com/L3MON4D3/LuaSnip" },
+    { src = "https://github.com/creativenull/efmls-configs-nvim" },
     {
         src = "https://github.com/saghen/blink.cmp",
         version = vim.version.range("1.*"),
@@ -355,13 +354,16 @@ require("mason-tool-installer").setup({
         "eslint",
         "prettier",
         "ruff",
-        "pylint",
-        "pyright",
+        "basedpyright",
         "intelephense",
         "ts_ls",
+        "jsonlint",
+        "htmlhint",
         "lua_ls",
+        "php-cs-fixer",
+        "luacheck",
         "stylua",
-        "vacuum",
+        "jsonls",
         "efm",
     },
 })
@@ -369,7 +371,7 @@ require("mason-tool-installer").setup({
 vim.opt.termguicolors = true
 
 vim.opt.background = "dark"
-vim.cmd("colorscheme neobones")
+-- vim.cmd("colorscheme neobones")
 
 vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Move to left window/pane" })
 vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Move to bottom window/pane" })
@@ -391,20 +393,24 @@ require("tiny-inline-diagnostic").setup({
 vim.diagnostic.config({ virtual_text = false })
 
 do
-    -- local luacheck = require("efmls-configs.linters.luacheck")
+    local php_cs_fixer = require("efmls-configs.formatters.php_cs_fixer")
+
+    local luacheck = require("efmls-configs.linters.luacheck")
     local stylua = require("efmls-configs.formatters.stylua")
 
-    local pylint = require("efmls-configs.linters.pylint")
     local ruff = require("efmls-configs.formatters.ruff")
 
-    local prettier = require("efmls-configs.formatters.prettier_d")
-    local eslint = require("efmls-configs.linters.eslint_d")
+    local prettier = require("efmls-configs.formatters.prettier")
+    local eslint = require("efmls-configs.linters.eslint")
 
     local shellcheck = require("efmls-configs.linters.shellcheck")
     local shfmt = require("efmls-configs.formatters.shfmt")
 
     local cpplint = require("efmls-configs.linters.cpplint")
     local clangfmt = require("efmls-configs.formatters.clang_format")
+
+    local htmlhint = require("efmls-configs.linters.htmlhint")
+    local jsonlint = require("efmls-configs.linters.jsonlint")
 
     local command = "sleek ${INPUT}"
 
@@ -429,6 +435,7 @@ do
             "python",
             "sh",
             "typescript",
+            "php",
             "typescriptreact",
             "angular",
             "sql",
@@ -443,14 +450,15 @@ do
                 c = { clangfmt, cpplint },
                 cpp = { clangfmt, cpplint },
                 css = { prettier },
-                html = { prettier },
+                html = { htmlhint, prettier },
                 javascript = { eslint, prettier },
                 javascriptreact = { eslint, prettier },
-                json = { eslint, prettier },
+                json = { jsonlint, eslint, prettier },
                 jsonc = { eslint, prettier },
-                lua = { stylua },
+                lua = { luacheck, stylua },
+                php = { php_cs_fixer },
                 markdown = { prettier },
-                python = { pylint, ruff },
+                python = { ruff },
                 sh = { shellcheck, shfmt },
                 typescript = { eslint, prettier },
                 typescriptreact = { eslint, prettier },
@@ -513,11 +521,14 @@ vim.lsp.enable({
     "yamlls",
     "bashls",
     "clangd",
-    "lua_lsp",
+    "lua_ls",
+    "eslint",
     "ts_ls",
     "intelephense",
-    "pyright",
     "sqls",
+    "basedpyright",
+    "ruff",
+    "jsonls",
     "efm",
 })
 
@@ -591,30 +602,9 @@ end)
 
 require("toggleterm").setup()
 
--- vim.opt.autocomplete = true
--- vim.opt.complete:append("o", "f")
-vim.opt.pumheight = 8
-
 vim.keymap.set("n", "<A-i>", "<CMD>ToggleTerm size=40 direction=float<CR>")
 vim.keymap.set("t", "<A-i>", "<CMD>ToggleTerm<CR>")
 vim.keymap.set("t", "<C-x>", "<C-\\><C-n>")
-
--- vim.api.nvim_create_autocmd("LspAttach", {
---     callback = function(ev)
---         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
---         -- Enable auto-completion. Note: Use CTRL-Y to select an item. |complete_CTRL-Y|
---         if client:supports_method("textDocument/completion") then
---             -- Optional: trigger autocompletion on EVERY keypress. May be slow!
---             local chars = {}
---             for i = 32, 126 do
---                 table.insert(chars, string.char(i))
---             end
---             client.server_capabilities.completionProvider.triggerCharacters = chars
---
---             vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
---         end
---     end,
--- })
 
 -- wrap, linebreak and spellcheck on markdown and text files
 vim.api.nvim_create_autocmd("FileType", {
