@@ -400,6 +400,9 @@ do
     local luacheck = require("efmls-configs.linters.luacheck")
     local stylua = require("efmls-configs.formatters.stylua")
 
+    local dartanalyzer = require("efmls-configs.linters.dartanalyzer")
+    local dartfmt = require("efmls-configs.formatters.dartfmt")
+
     local ruff = require("efmls-configs.formatters.ruff")
 
     local prettier = require("efmls-configs.formatters.prettier")
@@ -441,6 +444,7 @@ do
             "typescriptreact",
             "angular",
             "sql",
+            "dart",
         },
         init_options = {
             documentFormatting = true,
@@ -453,6 +457,7 @@ do
                 cpp = { clangfmt, cpplint },
                 css = { prettier },
                 html = { htmlhint, prettier },
+                dart = { dartanalyzer, dartfmt },
                 javascript = { eslint, prettier },
                 javascriptreact = { eslint, prettier },
                 json = { jsonlint, eslint, prettier },
@@ -562,6 +567,7 @@ vim.lsp.enable({
     "basedpyright",
     "ruff",
     "jsonls",
+    "dartls", -- found in :help lspconfig-all
     "efm",
 })
 
@@ -594,6 +600,7 @@ vim.keymap.set("n", "<leader>fr", "<CMD>FzfLua registers<CR>")
 vim.keymap.set("n", "<leader>fm", "<CMD>FzfLua marks<CR>")
 vim.keymap.set("n", "<leader>fi", "<CMD>FzfLua lsp_implementations<CR>")
 vim.keymap.set("n", "<leader>fs", "<CMD>FzfLua lsp_document_symbols<CR>")
+vim.keymap.set("n", "<leader>fc", "<CMD>FzfLua colorschemes<CR>")
 
 vim.keymap.set("n", "<leader>ts", function()
     require("mini.trailspace").trim()
