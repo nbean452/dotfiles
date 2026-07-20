@@ -157,6 +157,7 @@ vim.pack.add({
     { src = "https://github.com/refractalize/oil-git-status.nvim" },
     { src = "https://github.com/JezerM/oil-lsp-diagnostics.nvim" },
     { src = "https://github.com/vim-scripts/dbext.vim" },
+    { src = "https://github.com/rafamadriz/friendly-snippets" },
     { src = "https://github.com/L3MON4D3/LuaSnip" },
     { src = "https://github.com/creativenull/efmls-configs-nvim" },
     {
@@ -168,6 +169,7 @@ vim.pack.add({
 require("ibl").setup()
 require("csvview").setup()
 require("nvim-autopairs").setup()
+require("luasnip.loaders.from_vscode").lazy_load()
 require("which-key").setup({
     preset = "modern",
 })
@@ -185,7 +187,7 @@ require("lualine").setup({
         ignore_focus = {},
         always_divide_middle = true,
         always_show_tabline = true,
-        globalstatus = true,
+        globalstatus = false,
         refresh = {
             statusline = 1000,
             tabline = 1000,
@@ -482,6 +484,37 @@ do
     )
 end
 
+local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
+
+-- return to last cursor position
+vim.api.nvim_create_autocmd("BufReadPost", {
+    group = augroup,
+    desc = "Restore last cursor position",
+    callback = function()
+        if vim.o.diff then -- except in diff mode
+            return
+        end
+
+        local last_pos = vim.api.nvim_buf_get_mark(0, '"') -- {line, col}
+        local last_line = vim.api.nvim_buf_line_count(0)
+
+        local row = last_pos[1]
+        if row < 1 or row > last_line then
+            return
+        end
+
+        pcall(vim.api.nvim_win_set_cursor, 0, last_pos)
+    end,
+})
+
+-- highlight yanked text
+-- vim.api.nvim_create_autocmd("TextYankPost", {
+--     group = augroup,
+--     callback = function()
+--         vim.hl.on_yank()
+--     end,
+-- })
+
 require("blink.cmp").setup({
     keymap = {
         preset = "none",
@@ -585,6 +618,8 @@ vim.keymap.set("n", "<C-n>", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
 vim.keymap.set("n", "]c", "<CMD>Gitsigns nav_hunk next<CR>", { desc = "Next git hunk" })
 vim.keymap.set("n", "[c", "<CMD>Gitsigns nav_hunk prev<CR>", { desc = "Previous git hunk" })
+
+vim.keymap.set("n", "<leader>gd", "<CMD>Gitsigns diffthis .<CR>", { desc = "Diff this" })
 
 vim.keymap.set("n", "<leader>cse", "<CMD>CsvViewEnable<CR>", { desc = "Enable CSV view" })
 vim.keymap.set("n", "<leader>csd", "<CMD>CsvViewDisable<CR>", { desc = "Disable CSV view" })
