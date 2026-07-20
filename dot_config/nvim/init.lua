@@ -619,7 +619,7 @@ vim.keymap.set("n", "<C-n>", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "]c", "<CMD>Gitsigns nav_hunk next<CR>", { desc = "Next git hunk" })
 vim.keymap.set("n", "[c", "<CMD>Gitsigns nav_hunk prev<CR>", { desc = "Previous git hunk" })
 
-vim.keymap.set("n", "<leader>gd", "<CMD>Gitsigns diffthis .<CR>", { desc = "Diff this" })
+vim.keymap.set("n", "<leader>gd", "<CMD>Gitsigns diffthis<CR>", { desc = "Diff this" })
 
 vim.keymap.set("n", "<leader>cse", "<CMD>CsvViewEnable<CR>", { desc = "Enable CSV view" })
 vim.keymap.set("n", "<leader>csd", "<CMD>CsvViewDisable<CR>", { desc = "Disable CSV view" })
