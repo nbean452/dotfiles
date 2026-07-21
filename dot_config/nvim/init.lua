@@ -340,7 +340,17 @@ require("text-transform").setup({
 vim.keymap.set({ "n", "v" }, "<leader>cc", "<CMD>TextTransform<CR>", { silent = true, desc = "Trigger Text Transform" })
 
 require("mason").setup()
-require("mason-lspconfig").setup()
+require("mason-lspconfig").setup({
+    --[[
+     this plugin:
+     - automatically enables the lsp features, so this needs to be disabled
+     - helps ensure LSPs are installed, this excludes both linter and formatters
+     - allows `mason-tool-installer` to accept `lspconfig` package names
+
+     link: https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim#configuration
+    ]]
+    automatic_enable = false,
+})
 require("mason-tool-installer").setup({
     ensure_installed = {
         "sqls",
