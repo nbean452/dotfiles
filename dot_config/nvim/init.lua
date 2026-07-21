@@ -533,7 +533,6 @@ vim.lsp.enable({
     "bashls",
     "clangd",
     "lua_ls",
-    "eslint",
     "ts_ls",
     "intelephense",
     "sqls",
@@ -852,7 +851,7 @@ end
 setup_treesitter()
 
 -- trigger linting
-vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "InsertLeave" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
     callback = function()
         -- try_lint without arguments runs the linters defined in `linters_by_ft`
         -- for the current filetype
