@@ -159,7 +159,6 @@ vim.pack.add({
     { src = "https://github.com/vim-scripts/dbext.vim" },
     { src = "https://github.com/rafamadriz/friendly-snippets" },
     { src = "https://github.com/L3MON4D3/LuaSnip" },
-    { src = "https://github.com/creativenull/efmls-configs-nvim" },
     {
         src = "https://github.com/saghen/blink.cmp",
         version = vim.version.range("1.*"),
@@ -463,76 +462,6 @@ require("tiny-inline-diagnostic").setup({
 })
 vim.diagnostic.config({ virtual_text = false })
 
--- do
---     local luacheck = require("efmls-configs.linters.luacheck")
---     local dartanalyzer = require("efmls-configs.linters.dartanalyzer")
---     local eslint = require("efmls-configs.linters.eslint")
---     local shellcheck = require("efmls-configs.linters.shellcheck")
---     local cpplint = require("efmls-configs.linters.cpplint")
---     local htmlhint = require("efmls-configs.linters.htmlhint")
---     local jsonlint = require("efmls-configs.linters.jsonlint")
---
---     local efmls_config = {
---         filetypes = {
---             "c",
---             "cpp",
---             "css",
---             "go",
---             "html",
---             "javascript",
---             "javascriptreact",
---             "json",
---             "jsonc",
---             "lua",
---             "markdown",
---             "python",
---             "sh",
---             "typescript",
---             "php",
---             "typescriptreact",
---             "angular",
---             "sql",
---             "dart",
---         },
---         init_options = {
---             documentFormatting = true,
---             documentRangeFormatting = true,
---         },
---         settings = {
---             rootMarkers = { ".git/" },
---             languages = {
---                 c = { cpplint },
---                 cpp = { cpplint },
---                 html = { htmlhint },
---                 dart = { dartanalyzer },
---                 javascript = { eslint },
---                 javascriptreact = { eslint },
---                 json = { jsonlint, eslint },
---                 jsonc = { eslint },
---                 lua = { luacheck },
---                 php = {},
---                 markdown = {},
---                 python = {},
---                 sh = { shellcheck },
---                 typescript = { eslint },
---                 typescriptreact = { eslint },
---             },
---         },
---     }
---
---     vim.lsp.config(
---         "efm",
---         vim.tbl_extend("force", efmls_config, {
---             cmd = { "efm-langserver" },
---
---             -- Pass your custom lsp config below like on_attach and capabilities
---             --
---             -- on_attach = on_attach,
---             -- capabilities = capabilities,
---         })
---     )
--- end
-
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
 
 -- return to last cursor position
@@ -612,7 +541,6 @@ vim.lsp.enable({
     "ruff",
     "jsonls",
     "dartls", -- found in :help lspconfig-all
-    -- "efm",
 })
 
 -- buffer format
