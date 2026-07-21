@@ -164,10 +164,68 @@ vim.pack.add({
         src = "https://github.com/saghen/blink.cmp",
         version = vim.version.range("1.*"),
     },
+    { src = "https://github.com/stevearc/conform.nvim" },
+    { src = "https://github.com/mfussenegger/nvim-lint" },
 })
 
 require("ibl").setup()
 require("csvview").setup()
+require("conform").setup({
+    formatters_by_ft = {
+        lua = { "stylua" },
+        dart = { "dart_format" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
+        html = { "prettier" },
+        markdown = { "prettier" },
+        javascript = { "eslint", "prettier", stop_after_first = true },
+        javascriptreact = { "eslint", "prettier", stop_after_first = true },
+        typescript = { "eslint", "prettier", stop_after_first = true },
+        typescriptreact = { "eslint", "prettier", stop_after_first = true },
+        php = { "php_cs_fixer" },
+        python = { "ruff_fix", "ruff_format" },
+
+        css = { "prettier" },
+
+        sh = { "shfmt" },
+        sql = { "sleek" },
+        -- Conform will run multiple formatters sequentially
+        -- python = { "isort", "black" },
+        -- -- You can customize some of the format options for the filetype (:help conform.format)
+        -- rust = { "rustfmt", lsp_format = "fallback" },
+        -- -- Conform will run the first available formatter
+        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+    },
+    default_format_opts = {
+        lsp_format = "fallback",
+    },
+})
+require("lint").linters_by_ft = {
+    c = { "cpplint" },
+    cpp = { "cpplint" },
+    -- dart = {"dart"}
+    html = { "htmlhint" },
+
+    javascript = { "eslint" },
+    javascriptreact = { "eslint" },
+    typescript = { "eslint" },
+    typescriptreact = { "eslint" },
+
+    json = { "jsonlint", "eslint" },
+    jsonc = { "eslint" },
+
+    lua = { "luacheck" },
+
+    php = { "phpcs" },
+    -- markdown = {}
+
+    python = { "basedpyright" },
+
+    sh = { "shellcheck" },
+
+    sql = { "sqlfluff" },
+}
+
 require("nvim-autopairs").setup()
 require("luasnip.loaders.from_vscode").lazy_load()
 require("which-key").setup({
@@ -354,6 +412,7 @@ require("mason-lspconfig").setup({
 require("mason-tool-installer").setup({
     ensure_installed = {
         "sqls",
+        "codespell",
         "bashls",
         "shfmt",
         "shellcheck",
@@ -373,10 +432,10 @@ require("mason-tool-installer").setup({
         "htmlhint",
         "lua_ls",
         "php-cs-fixer",
+        "phpcs",
         "luacheck",
         "stylua",
         "jsonls",
-        "efm",
     },
 })
 
@@ -404,100 +463,75 @@ require("tiny-inline-diagnostic").setup({
 })
 vim.diagnostic.config({ virtual_text = false })
 
-do
-    local php_cs_fixer = require("efmls-configs.formatters.php_cs_fixer")
-
-    local luacheck = require("efmls-configs.linters.luacheck")
-    local stylua = require("efmls-configs.formatters.stylua")
-
-    local dartanalyzer = require("efmls-configs.linters.dartanalyzer")
-    local dartfmt = require("efmls-configs.formatters.dartfmt")
-
-    local ruff = require("efmls-configs.formatters.ruff")
-
-    local prettier = require("efmls-configs.formatters.prettier")
-    local eslint = require("efmls-configs.linters.eslint")
-
-    local shellcheck = require("efmls-configs.linters.shellcheck")
-    local shfmt = require("efmls-configs.formatters.shfmt")
-
-    local cpplint = require("efmls-configs.linters.cpplint")
-    local clangfmt = require("efmls-configs.formatters.clang_format")
-
-    local htmlhint = require("efmls-configs.linters.htmlhint")
-    local jsonlint = require("efmls-configs.linters.jsonlint")
-
-    local command = "sleek ${INPUT}"
-
-    local sleek = {
-        formatCommand = command,
-        formatStdin = true,
-    }
-
-    local efmls_config = {
-        filetypes = {
-            "c",
-            "cpp",
-            "css",
-            "go",
-            "html",
-            "javascript",
-            "javascriptreact",
-            "json",
-            "jsonc",
-            "lua",
-            "markdown",
-            "python",
-            "sh",
-            "typescript",
-            "php",
-            "typescriptreact",
-            "angular",
-            "sql",
-            "dart",
-        },
-        init_options = {
-            documentFormatting = true,
-            documentRangeFormatting = true,
-        },
-        settings = {
-            rootMarkers = { ".git/" },
-            languages = {
-                c = { clangfmt, cpplint },
-                cpp = { clangfmt, cpplint },
-                css = { prettier },
-                html = { htmlhint, prettier },
-                dart = { dartanalyzer, dartfmt },
-                javascript = { eslint, prettier },
-                javascriptreact = { eslint, prettier },
-                json = { jsonlint, eslint, prettier },
-                jsonc = { eslint, prettier },
-                lua = { luacheck, stylua },
-                php = { php_cs_fixer },
-                markdown = { prettier },
-                python = { ruff },
-                sh = { shellcheck, shfmt },
-                typescript = { eslint, prettier },
-                typescriptreact = { eslint, prettier },
-                vue = { eslint, prettier },
-                svelte = { eslint, prettier },
-                sql = { sleek },
-            },
-        },
-    }
-
-    vim.lsp.config(
-        "efm",
-        vim.tbl_extend("force", efmls_config, {
-            cmd = { "efm-langserver" },
-
-            -- Pass your custom lsp config below like on_attach and capabilities
-            --
-            -- on_attach = on_attach,
-            -- capabilities = capabilities,
-        })
-    )
-end
+-- do
+--     local luacheck = require("efmls-configs.linters.luacheck")
+--     local dartanalyzer = require("efmls-configs.linters.dartanalyzer")
+--     local eslint = require("efmls-configs.linters.eslint")
+--     local shellcheck = require("efmls-configs.linters.shellcheck")
+--     local cpplint = require("efmls-configs.linters.cpplint")
+--     local htmlhint = require("efmls-configs.linters.htmlhint")
+--     local jsonlint = require("efmls-configs.linters.jsonlint")
+--
+--     local efmls_config = {
+--         filetypes = {
+--             "c",
+--             "cpp",
+--             "css",
+--             "go",
+--             "html",
+--             "javascript",
+--             "javascriptreact",
+--             "json",
+--             "jsonc",
+--             "lua",
+--             "markdown",
+--             "python",
+--             "sh",
+--             "typescript",
+--             "php",
+--             "typescriptreact",
+--             "angular",
+--             "sql",
+--             "dart",
+--         },
+--         init_options = {
+--             documentFormatting = true,
+--             documentRangeFormatting = true,
+--         },
+--         settings = {
+--             rootMarkers = { ".git/" },
+--             languages = {
+--                 c = { cpplint },
+--                 cpp = { cpplint },
+--                 html = { htmlhint },
+--                 dart = { dartanalyzer },
+--                 javascript = { eslint },
+--                 javascriptreact = { eslint },
+--                 json = { jsonlint, eslint },
+--                 jsonc = { eslint },
+--                 lua = { luacheck },
+--                 php = {},
+--                 markdown = {},
+--                 python = {},
+--                 sh = { shellcheck },
+--                 typescript = { eslint },
+--                 typescriptreact = { eslint },
+--             },
+--         },
+--     }
+--
+--     vim.lsp.config(
+--         "efm",
+--         vim.tbl_extend("force", efmls_config, {
+--             cmd = { "efm-langserver" },
+--
+--             -- Pass your custom lsp config below like on_attach and capabilities
+--             --
+--             -- on_attach = on_attach,
+--             -- capabilities = capabilities,
+--         })
+--     )
+-- end
 
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
 
@@ -578,15 +612,12 @@ vim.lsp.enable({
     "ruff",
     "jsonls",
     "dartls", -- found in :help lspconfig-all
-    "efm",
+    -- "efm",
 })
 
 -- buffer format
 vim.keymap.set("n", "<leader>lf", function()
-    vim.lsp.buf.format({
-        name = "efm",
-        async = false,
-    })
+    require("conform").format()
 end)
 
 -- new and close buffers
@@ -845,7 +876,7 @@ local setup_treesitter = function()
     local ensure_installed = {
         "vim",
         "vimdoc",
-        -- "rust",
+        "rust",
         "c",
         "cpp",
         "go",
@@ -861,6 +892,7 @@ local setup_treesitter = function()
         "angular",
         "php",
         "tsx",
+        "dart",
     }
 
     local config = require("nvim-treesitter.config")
@@ -890,3 +922,16 @@ local setup_treesitter = function()
 end
 
 setup_treesitter()
+
+-- trigger linting
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "InsertLeave" }, {
+    callback = function()
+        -- try_lint without arguments runs the linters defined in `linters_by_ft`
+        -- for the current filetype
+        require("lint").try_lint()
+
+        -- You can call `try_lint` with a linter name or a list of names to always
+        -- run specific linters, independent of the `linters_by_ft` configuration
+        -- require("lint").try_lint("cspell")
+    end,
+})
