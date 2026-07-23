@@ -873,5 +873,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "CursorMoved", "Insert
     end,
 })
 
+vim.g.EasyMotion_do_mapping = 0
 vim.g.EasyMotion_smartcase = 1
-vim.keymap.set({ "n", "x", "o" }, "ss", "<Plug>(easymotion-s2)")
+vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(easymotion-s2)")
