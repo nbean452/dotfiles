@@ -131,7 +131,7 @@ vim.pack.add({
     { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
     { src = "https://github.com/shrynx/line-numbers.nvim" },
     { src = "https://github.com/chenasraf/text-transform.nvim" },
-    { src = "https://github.com/christoomey/vim-tmux-navigator" },
+    { src = "https://github.com/easymotion/vim-easymotion" },
     { src = "http://github.com/windwp/nvim-ts-autotag" },
     { src = "https://github.com/windwp/nvim-autopairs" },
     { src = "https://github.com/alvan/vim-closetag" },
@@ -181,8 +181,11 @@ require("conform").setup({
         javascriptreact = { "eslint", "prettier", stop_after_first = true },
         typescript = { "eslint", "prettier", stop_after_first = true },
         typescriptreact = { "eslint", "prettier", stop_after_first = true },
-        php = { "php_cs_fixer" },
+        php = { "phpcbf" },
         python = { "ruff_fix", "ruff_format" },
+
+        xml = { "xmlformatter" },
+        yaml = { "yamlfmt" },
 
         css = { "prettier" },
 
@@ -205,8 +208,8 @@ require("lint").linters_by_ft = {
     -- dart = {"dart"}
     html = { "htmlhint" },
 
-    javascript = { "eslint" },
-    javascriptreact = { "eslint" },
+    -- javascript = { "eslint" },
+    -- javascriptreact = { "eslint" },
     typescript = { "eslint" },
     typescriptreact = { "eslint" },
 
@@ -218,7 +221,7 @@ require("lint").linters_by_ft = {
     php = { "phpcs" },
     -- markdown = {}
 
-    python = { "basedpyright" },
+    -- python = { "basedpyright" },
 
     sh = { "shellcheck" },
 
@@ -410,6 +413,12 @@ require("mason-lspconfig").setup({
 })
 require("mason-tool-installer").setup({
     ensure_installed = {
+        "xmlformatter",
+        "yamlls",
+        "yamlfmt",
+        "yamllint",
+        "lemminx",
+        "sqlfluff",
         "sqls",
         "codespell",
         "bashls",
@@ -430,8 +439,8 @@ require("mason-tool-installer").setup({
         "jsonlint",
         "htmlhint",
         "lua_ls",
-        "php-cs-fixer",
         "phpcs",
+        "phpcbf",
         "luacheck",
         "stylua",
         "jsonls",
@@ -441,7 +450,7 @@ require("mason-tool-installer").setup({
 vim.opt.termguicolors = true
 
 vim.opt.background = "dark"
--- vim.cmd("colorscheme neobones")
+vim.cmd("colorscheme default")
 
 vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Move to left window/pane" })
 vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Move to bottom window/pane" })
@@ -460,7 +469,7 @@ require("tiny-inline-diagnostic").setup({
         },
     },
 })
-vim.diagnostic.config({ virtual_text = false })
+vim.diagnostic.config({ signs = false, virtual_text = false })
 
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
 
@@ -530,6 +539,7 @@ vim.lsp.config["*"] = {
 vim.lsp.enable({
     "docker_compose_language_service",
     "yamlls",
+    "lemminx",
     "bashls",
     "clangd",
     "lua_ls",
@@ -851,7 +861,7 @@ end
 setup_treesitter()
 
 -- trigger linting
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "CursorMoved", "InsertLeave" }, {
     callback = function()
         -- try_lint without arguments runs the linters defined in `linters_by_ft`
         -- for the current filetype
@@ -859,6 +869,9 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 
         -- You can call `try_lint` with a linter name or a list of names to always
         -- run specific linters, independent of the `linters_by_ft` configuration
-        -- require("lint").try_lint("cspell")
+        require("lint").try_lint("codespell")
     end,
 })
+
+vim.g.EasyMotion_smartcase = 1
+vim.keymap.set({ "n", "x", "o" }, "ss", "<Plug>(easymotion-s2)")
