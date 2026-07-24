@@ -116,6 +116,7 @@ vim.opt.cursorlineopt = "both" -- to enable cursorline!
 
 vim.pack.add({
     { src = "https://github.com/tpope/vim-repeat" },
+    { src = "https://github.com/christoomey/vim-tmux-navigator" },
     { src = "https://github.com/tpope/vim-surround" },
     { src = "https://github.com/neovim/nvim-lspconfig" },
     { src = "https://github.com/djoshea/vim-autoread" },
@@ -452,10 +453,10 @@ vim.opt.termguicolors = true
 vim.opt.background = "dark"
 vim.cmd("colorscheme default")
 
--- vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Move to left window/pane" })
--- vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Move to bottom window/pane" })
--- vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Move to top window/pane" })
--- vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Move to right window/pane" })
+vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Move to left window/pane" })
+vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Move to bottom window/pane" })
+vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Move to top window/pane" })
+vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Move to right window/pane" })
 
 require("tiny-inline-diagnostic").setup({
     -- Available: "modern", "classic", "minimal", "powerline", "ghost", "simple", "nonerdfont", "amongus"
