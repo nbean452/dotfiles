@@ -188,6 +188,8 @@ require("conform").setup({
         xml = { "xmlformatter" },
         yaml = { "yamlfmt" },
 
+        nix = { "nixfmt" },
+
         css = { "prettier" },
 
         sh = { "shfmt" },
@@ -547,6 +549,7 @@ require("mason-tool-installer").setup({
         "luacheck",
         "stylua",
         "jsonls",
+        "nil_ls",
     },
 })
 
@@ -652,6 +655,7 @@ vim.lsp.enable({
     "basedpyright",
     "ruff",
     "jsonls",
+    "nil_ls",
     "dartls", -- found in :help lspconfig-all
 })
 
