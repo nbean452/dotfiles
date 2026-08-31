@@ -178,10 +178,10 @@ require("conform").setup({
         cpp = { "clang-format" },
         html = { "prettier" },
         markdown = { "prettier" },
-        javascript = { "eslint", "prettier", stop_after_first = true },
-        javascriptreact = { "eslint", "prettier", stop_after_first = true },
-        typescript = { "eslint", "prettier", stop_after_first = true },
-        typescriptreact = { "eslint", "prettier", stop_after_first = true },
+        javascript = { "eslint_d", "prettierd", stop_after_first = true },
+        javascriptreact = { "eslint_d", "prettierd", stop_after_first = true },
+        typescript = { "eslint_d", "prettierd", stop_after_first = true },
+        typescriptreact = { "eslint_d", "prettierd", stop_after_first = true },
         php = { "phpcbf" },
         python = { "ruff_fix", "ruff_format" },
 
@@ -213,8 +213,8 @@ require("lint").linters_by_ft = {
 
     -- javascript = { "eslint" },
     -- javascriptreact = { "eslint" },
-    typescript = { "eslint" },
-    typescriptreact = { "eslint" },
+    -- typescript = { "eslint" },
+    -- typescriptreact = { "eslint" },
 
     json = { "jsonlint", "eslint" },
     jsonc = { "eslint" },
@@ -536,6 +536,7 @@ require("mason-tool-installer").setup({
         "sleek",
         "yamlfix",
         "eslint",
+        "eslint_d",
         "prettier",
         "ruff",
         "basedpyright",
@@ -657,6 +658,7 @@ vim.lsp.enable({
     "jsonls",
     "nil_ls",
     "dartls", -- found in :help lspconfig-all
+    "eslint",
 })
 
 local trigger_lint = function()
